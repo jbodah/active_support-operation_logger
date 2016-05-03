@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["jb3689@yahoo.com"]
 
   spec.summary       = %q{adds ActiveRecord-like logging to anything you want}
-  spec.homepage      = "https://github.com/jbodah/active_support-operation_logger"
+  spec.homepage      = "https://github.com/jbodah/activesupport-operation_logger"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"
