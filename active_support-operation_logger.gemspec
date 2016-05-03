@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'active_support/operation_logger/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "active_support-operation_logger"
+  spec.name          = "activesupport-operation_logger"
   spec.version       = ActiveSupport::OperationLogger::VERSION
   spec.authors       = ["Josh Bodah"]
   spec.email         = ["jb3689@yahoo.com"]

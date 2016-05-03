@@ -7,7 +7,7 @@ adds ActiveRecord-like logging to anything you want
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'active_support-operation_logger'
+gem 'activesupport-operation_logger'
 ```
 
 And then execute:
@@ -16,12 +16,12 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install active_support-operation_logger
+    $ gem install activesupport-operation_logger
 
 ## Usage
 
 ```rb
-require 'active_support-operation_logger'
+require 'active_support/operation_logger'
 
 ActiveSupport::OperationLogger.log_calls_on! MyKlass
 ActiveSupport::OperationLogger.log_calls_on! Redis::Client, event_namespace: 'redis', only: :call
