@@ -30,7 +30,7 @@ module ActiveSupport
                               args.map(&:inspect).join(' ')
                             end
               ActiveSupport::Notifications.instrument("call.#{event_namespace}",
-                                                      name: "#{event_namespace.to_s.classify} #{m}",
+                                                      name: "#{event_namespace.to_s.camelize} #{m}",
                                                       command: command_str) do
                 super *args, &block
               end
