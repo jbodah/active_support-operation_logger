@@ -19,19 +19,24 @@ module ActiveSupport
       # @param [Class] klass
       # @param [Array<Symbol>] methods
       # @param [Symbol] event_namespace
+      # @param [#call] filter
       # @return [Module] a module for prepending
-      def self.instrumenter_for(klass, methods, event_namespace)
+      def self.instrumenter_for(klass, methods, event_namespace, filter = nil)
         Module.new do
           methods.each do |m|
             define_method m do |*args, &block|
-              command_str = if args.size == 1 && args.first.is_a?(Array)
-                              args.first.map(&:inspect).join(', ')
-                            else
-                              args.map(&:inspect).join(' ')
-                            end
-              ActiveSupport::Notifications.instrument("call.#{event_namespace}",
-                                                      name: "#{event_namespace.to_s.camelize} #{m}",
-                                                      command: command_str) do
+              if !filter || filter.call(m, *args, &block)
+                command_str = if args.size == 1 && args.first.is_a?(Array)
+                                args.first.map(&:inspect).join(', ')
+                              else
+                                args.map(&:inspect).join(' ')
+                              end
+                event_id = "call.#{event_namespace}"
+                name = "#{event_namespace.to_s.camelize} #{m}"
+                ActiveSupport::Notifications.instrument(event_id, name: name, command: command_str) do
+                  super *args, &block
+                end
+              else
                 super *args, &block
               end
             end
@@ -75,12 +80,12 @@ module ActiveSupport
     # instrumenters and ActiveSupport::LogSubscribers
     #
     # TODO: @jbodah 2016-04-30: just use one shared event subscriber
-    def self.log_calls_on!(klass, only: nil, event_namespace: nil)
+    def self.log_calls_on!(klass, only: nil, event_namespace: nil, filter: nil)
       methods = only || MethodHelper.public_owned_instance_methods(klass)
       event_namespace ||= klass.name.demodulize.underscore
       event_namespace = event_namespace.to_sym
 
-      klass.prepend EventInstrumenterFactory.instrumenter_for(klass, methods, event_namespace)
+      klass.prepend EventInstrumenterFactory.instrumenter_for(klass, methods, event_namespace, filter)
 
       EventSubscriberFactory.subscriber_for(klass).attach_to(event_namespace)
     end
